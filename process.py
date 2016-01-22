@@ -12,14 +12,14 @@ parser.add_argument('-len', action='store_true')
 parser.add_argument('-r', action='store_true')
 parser.add_argument('-trim', action='store_true')
 parser.add_argument('-all', action='store_true')
-parser.add_argument('-ext', choices=['code', 'code.stack', 'code.heap.stack', 'link'], default=False)
+parser.add_argument('-ext', choices=['code', 'code.stack', 'code.heap.stack', 'link', 'code.norandom', 'code.stack.norandom', 'code.heap.stack.norandom', 'link'], default=False)
 parser.add_argument('-tune', choices=['base', 'peak'], default=False)
 parser.add_argument('files', nargs='+')
 
 args = parser.parse_args()
 
 if args.ext == False:
-	args.ext = ['code', 'code.stack', 'code.heap.stack', 'link']
+	args.ext = ['code', 'code.stack', 'code.heap.stack', 'link', 'code.norandom', 'code.stack.norandom', 'code.heap.stack.norandom', 'link']
 else:
 	args.ext = [args.ext]
 
