@@ -67,8 +67,10 @@ int main(int argc, char **argv) {
     DEBUG("Trapped all functions");
     
     // Set the re-randomization timer
-    setTimer(interval);
-    DEBUG("Set re-randomization timer");
+    if (!getenv("RERANDOMIZEOFF")) {
+      setTimer(interval);
+      DEBUG("Set re-randomization timer");
+    }
     
     // Call all constructors
     for(vector<ctor_t>::iterator i = constructors.begin(); i != constructors.end(); i++) {
