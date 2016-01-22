@@ -8,7 +8,7 @@ benchmarks = ['astar', 'bwaves', 'bzip2', 'cactusADM', 'calculix', 'gcc', 'gobmk
 iterations = 10
 to_run = []
 dont_run = []
-configs = ['code', 'code.stack', 'code.heap.stack', 'stack', 'heap.stack', 'heap', 'link']
+configs = ['code', 'code.stack', 'code.heap.stack', 'stack', 'heap.stack', 'heap', 'link','code.norandom', 'code.stack.norandom', 'code.heap.stack.norandom', 'stack.norandom', 'heap.stack.norandom', 'heap.norandom', 'link.norandom']
 tune = 'O2'
 size = 'train'
 run_configs = []
@@ -25,7 +25,7 @@ for arg in sys.argv[1:]:
 	elif arg in ['test', 'train', 'ref']:
 		size = arg
 	else:
-		iterations = int(arg)
+                iterations = int(arg)
 
 if len(to_run) == 0:
 	to_run = benchmarks
@@ -37,7 +37,7 @@ for bmk in dont_run:
 	if bmk in to_run:
 		to_run.remove(bmk)
 
-def runspec(bench, size, tune, ext, n, rebuild=False):
+def runspec(bench, size, tune, ext, n, rebuild=False, rerandom=True):
 	if tune == 'O0' or tune == 'O1':
 		real_config = 'szclo'
 	elif tune == 'O2' or tune == 'O3':
@@ -47,8 +47,11 @@ def runspec(bench, size, tune, ext, n, rebuild=False):
 		real_tune = 'base'
 	elif tune == 'O1' or tune == 'O3':
 		real_tune = 'peak'
-	
-	cmd = 'runspec --config='+real_config+' --mach=linux --action=run --tune='+real_tune+' --size='+size+' --ext='+ext+' -n '+str(n)
+	if rerandom:
+                cmd = ''
+        else:
+                cmd = 'RERANDOMIZEOFF=1 '
+	cmd += 'runspec --config='+real_config+' --mach=linux --action=run --tune='+real_tune+' --size='+size+' --ext='+ext+' -n '+str(n)
 	if rebuild:
 		cmd += ' --rebuild'
 	cmd += ' '+bench
@@ -60,6 +63,7 @@ for bmk in to_run:
 		if config == 'link':
 			for i in range(0, iterations):
 				runspec(bmk, size, tune, 'link', 1, rebuild=True)
-		else:
-			runspec(bmk, size, tune, config, iterations, rebuild=True)
-
+		elif config.endswith('.norandom'):
+			runspec(bmk, size, tune, config, iterations, rebuild=True, rerandom=False)
+                else:
+                        runspec(bmk, size, tune, config, iterations, rebuild=True)
